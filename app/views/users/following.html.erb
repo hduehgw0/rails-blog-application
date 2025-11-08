@@ -1,0 +1,17 @@
+<h1><%= @user.name %> のフォロー中</h1>
+
+<div class="row">
+  <% @users.each do |user| %>
+    <div class="col-md-6 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h5><%= link_to user.name, user_path(user) %></h5>
+          <p class="text-muted"><%= truncate(user.introduction, length: 100) if user.introduction %></p>
+          <small>投稿数: <%= user.posts.count %></small>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>

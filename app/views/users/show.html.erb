@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h4><%= @user.name %></h4>
+        <p class="text-muted"><%= @user.email %></p>
+        <% if @user.introduction.present? %>
+          <p><%= @user.introduction %></p>
+        <% end %>
+        
+        <div class="mb-3">
+          <strong>投稿数:</strong> <%= @user.posts.count %><br>
+          <%= link_to "フォロー中: #{@user.following.count}", following_user_path(@user) %><br>
+          <%= link_to "フォロワー: #{@user.followers.count}", followers_user_path(@user) %>
+        </div>
+        
+        <% if user_signed_in? && @user != current_user %>
+          <% if current_user.following?(@user) %>
+            <% relationship = current_user.active_relationships.find_by(following_id: @user.id) %>
+            <%= button_to "フォロー解除", relationship_path(relationship), method: :delete, class: "btn btn-outline-primary w-100" %>
+          <% else %>
+            <%= button_to "フォローする", relationships_path, params: { following_id: @user.id }, class: "btn btn-primary w-100" %>
+          <% end %>
+        <% end %>
+        
+        <% if user_signed_in? && @user == current_user %>
+          <%= link_to "プロフィール編集", edit_user_registration_path, class: "btn btn-outline-secondary w-100" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-8">
+    <h4>投稿一覧</h4>
+    <% @posts.each do |post| %>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"><%= link_to post.title, post %></h5>
+          <p class="card-text"><%= truncate(post.content, length: 200) %></p>
+          <p class="card-text">
+            <small class="text-muted"><%= time_ago_in_words(post.created_at) %>前</small>
+          </p>
+        </div>
+      </div>
+    <% end %>
+    <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
+  </div>
+</div>
